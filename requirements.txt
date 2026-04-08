@@ -1,0 +1,14 @@
+ 
+Flask
+dash
+dash-bootstrap-components
+pytesseract
+pdf2image
+Pillow
+langchain 
+langchain-community 
+langchain-core
+python-docx
+Werkzeug
+pytesseract
+requests

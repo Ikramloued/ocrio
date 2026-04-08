@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Ocrio - Assistant OCR Intelligent</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<header>
+    <img src="{{ url_for('static', filename='logo.png') }}" alt="Ocrio Logo" class="logo">
+    <p class="subtitle">
+        Votre assistant intelligent pour transformer vos PDFs en textes clairs et exploitables
+    </p>
+</header>
+
+<main>
+
+    <div class="form-container">
+        <h3>OCR PDF unique</h3>
+
+        <form action="/" method="POST" enctype="multipart/form-data">
+
+            <label>Sélectionner le PDF :</label>
+            <input type="file" name="pdf_file" accept=".pdf" required>
+
+            <label>Langue OCR :</label>
+            <select name="lang">
+                <option value="fra">Français</option>
+                <option value="eng">Anglais</option>
+                <option value="ara">Arabe</option>
+                <option value="multi">Arabe + Français + Anglais</option>
+            </select>
+
+            <label>LLM :</label>
+            <select name="llm">
+                <option value="none">Aucun</option>
+                <option value="latin">Latin</option>
+                <option value="arabic">Arabe</option>
+                <option value="multilingual">Multilingue</option>
+            </select>
+
+            <button type="submit">📄 OCR PDF</button>
+        </form>
+    </div>
+
+    <hr>
+
+    <div class="form-container">
+        <h3>OCR Batch – Dossier complet</h3>
+
+        <form action="/process_folder" method="POST" enctype="multipart/form-data">
+
+            <label>Sélectionner un dossier contenant des PDFs :</label>
+            <input
+                type="file"
+                name="pdf_folder"
+                webkitdirectory
+                directory
+                multiple
+                required
+            >
+
+            <label>Langue OCR :</label>
+            <select name="lang">
+                <option value="fra">Français</option>
+                <option value="eng">Anglais</option>
+                <option value="ara">Arabe</option>
+                <option value="multi">Arabe + Français + Anglais</option>
+            </select>
+
+            <label>LLM :</label>
+            <select name="llm">
+                <option value="none">Aucun</option>
+                <option value="latin">Latin</option>
+                <option value="arabic">Arabe</option>
+                <option value="multilingual">Multilingue</option>
+            </select>
+
+            <button type="submit">📂 Lancer OCR Batch</button>
+        </form>
+    </div>
+
+    {% if message %}
+        <p class="info-message">{{ message }}</p>
+    {% endif %}
+
+</main>
+
+<footer>
+    <a href="/dash/">📊 Voir le tableau de bord</a>
+</footer>
+
+</body>
+</html>
