@@ -1,108 +1,169 @@
+## Ocrio = OCR + Intelligence & Innovation
+📄 PDF OCR & LLM Web App
 
-Ocrio = OCR + intelligence & innovation
+Ocrio is a Flask + Dash web application that performs OCR on uploaded PDF files, enhances the extracted text using Ollama LLMs, and allows users to download the results in .txt and .docx formats. It also includes an embedded dashboard for visualization.
 
-# PDF OCR & LLM Web App
+# 🚀 Features
+Upload PDF files for processing
+OCR extraction from scanned PDFs
+Support for multi-page documents
+Support for multilingual OCR (Arabic + Latin)
+LLM-based text cleaning and structuring
+Export results as .txt and .docx
+Download processed files
+Batch processing of multiple PDFs
+Embedded Dash dashboard for visualization
+Fully Dockerized application
+🧠 LLM Options
+Mode	Model
+arabic	command-r7b-arabic:latest
+latin	deepseek-r1:14b
+multilingual	multilingual cleaning prompt
+none	no LLM processing
+#  Architecture
+🔹 Frontend
+Flask Templates (index.html)
+Upload PDF
+Select OCR language
+Select LLM
+Download results
+Dash Dashboard (/dash/)
+Visualize processed text
+Analytics and charts
+🔹 Backend
+Flask Server
+/ → Upload PDF
+/process/<filename> → OCR + LLM processing
+/process_folder → Batch processing
+/processed/<filename> → Download files
+Dash App
+Embedded in Flask
+Handles visualization
+🔹 OCR Processing
+ocr.ocr_processor.ocr_pdf(pdf_path, lang)
+Converts PDF → images
+Processes each page
+Combines text
+Supports:
+fra
+eng
+ara
+ara+fra+eng
+🔹 LLM Processing
+llm.llm_processor.process_with_llm(text, llm_type)
+Cleans OCR errors
+Structures paragraphs
+Preserves original language
+No hallucination / no added content
+🔹 Output
 
-A Flask + Dash web application that performs OCR on uploaded PDF files, cleans the text using Ollama LLMs, and allows downloading the results in `.txt` and `.docx` formats. Users can also visualize processed data through an embedded Dash dashboard.
+Files saved in:
 
----
-
-## **Features**
-
-- Upload PDF files for processing
-- Choose LLM type:
-  - `arabic` → `command-r7b-arabic:latest`
-  - `latin` → `deepseek-r1:14b`
-  - `none` → skip LLM processing
-- OCR extraction using `ocr_pdf`
-- LLM text cleaning and formatting
-- Save results as `.txt` and `.docx`
-- Download processed files
-- Embedded Dash dashboard for visualization
-
----
-
-## **Architecture**
-
-### **1️⃣ Frontend**
-- Flask Templates (`index.html`)
-  - Upload PDF file
-  - Choose LLM type
-  - Download links after processing
-- Dash Dashboard (`/dash/`)
-  - Display text statistics, charts, and analytics
-
-### **2️⃣ Backend**
-- Flask Server
-  - `/` → Upload PDF
-  - `/process/<filename>` → OCR + LLM processing + TXT/DOCX creation
-  - `/download` → Serve processed files for download
-- Dash App
-  - Embedded inside Flask
-  - Handles visualization and callbacks
-
-### **3️⃣ OCR Processing**
-- `ocr.ocr_processor.ocr_pdf(pdf_path, output_txt_path)`
-  - Extracts text from PDF
-  - Saves intermediate `.txt` file
-
-### **4️⃣ LLM Processing**
-- `llm.llm_processor.process_with_llm(raw_text, llm_type)`
-  - Uses Ollama models:
-    - Arabic → `command-r7b-arabic:latest`
-    - Latin → `deepseek-r1:14b`
-  - Returns cleaned/improved text
-
-### **5️⃣ File Output**
-- Results stored in `processed/`:
-  - `.txt` → plain text
-  - `.docx` → formatted document
-- Download via Flask `send_file`
-
----
-
-## **Folder Structure**
-
+/processed/
+.txt
+.docx
+📂 Project Structure
 my_pdf_app/
 │
-├── app.py # Flask server + route handling
+├── app.py
+├── Dockerfile
+├── requirements.txt
+├── .dockerignore
+│
 ├── dash_app/
-│ ├── layout.py # Dash layout
-│ └── callbacks.py # Dash callbacks
+│   ├── layout.py
+│   └── callbacks.py
+│
 ├── llm/
-│ └── llm_processor.py # LLM processing functions
+│   └── llm_processor.py
+│
 ├── ocr/
-│ └── ocr_processor.py # OCR processing functions
+│   └── ocr_processor.py
+│
 ├── templates/
-│ └── index.html # File upload page
-├── uploads/ # Temporary uploaded PDFs
-└── processed/ # OCR/LLM outputs (.txt, .docx)
-
-## **workflow diagram**
+│   └── index.html
+│
+├── static/
+│   ├── style.css
+│   └── logo.png
+│
+├── uploads/
+└── processed/
+# 🔄 Workflow
 User
 │
-│ Upload PDF + choose LLM
+│ Upload PDF + select language + LLM
 ▼
-Flask Route: '/'
+Flask '/'
 │
 ├─ Save PDF → /uploads/
 ▼
-Flask Route: '/process/<filename>'
+Flask '/process'
 │
-├─ OCR Processor → raw text → /processed/.txt
+├─ OCR
+│   ├─ Split pages
+│   ├─ OCR each page
+│   └─ Combine text
 │
-├─ LLM Processor → final text → /processed/.txt & .docx
+├─ LLM (optional)
+│   └─ Clean + structure text
+│
+├─ Save results
+│   ├─ TXT
+│   └─ DOCX
 │
 ▼
-Return page with:
+Return download links + dashboard
+# 🐳 Docker Usage
+🔽 Pull from Docker Hub (recommended)
+docker pull ikramloued/ocrio-app:latest
+▶️ Run the container
+docker run -p 5000:5000 -e OLLAMA_BASE_URL=http://host.docker.internal:11434 ikramloued/ocrio-app:latest
+🌐 Access the app
+http://localhost:5000
+🛠 Local Build (optional)
+docker build -t ocrio-app .
+docker run -p 5000:5000 -e OLLAMA_BASE_URL=http://host.docker.internal:11434 ocrio-app
+⚠️ Requirements
+Docker installed
+Ollama installed locally
+Ollama running on:
+http://localhost:11434
 
-Download TXT
+Test:
 
-Download DOCX
+curl http://localhost:11434/api/tags
+# 🧩 Notes
+Ollama is not inside Docker
 
-Link to Dash Dashboard
-│
-▼
-Dash App: '/dash/'
-│
-└─ Visualize / Analyze processed text
+The container connects to Ollama via:
+
+host.docker.internal
+Supports:
+multilingual documents
+multi-page PDFs
+batch processing
+📊 Dashboard
+
+Access:
+
+http://localhost:5000/dash/
+Text analytics
+Visualization
+Metrics
+🧠 Summary
+
+Ocrio is a complete OCR + LLM pipeline:
+
+Extract text from scanned PDFs
+Clean and structure with LLMs
+Support multilingual documents
+Export results
+Visualize data
+Run anywhere via Docker
+👤 Author
+
+Ikram Loued
+
+⭐ Quick Start (1 command)
+docker run -p 5000:5000 -e OLLAMA_BASE_URL=http://host.docker.internal:11434 ikramloued/ocrio-app:latest
